@@ -1,0 +1,1 @@
+import { useContext } from "react"; import { NoticeContext } from "../contexts/CenterContext"; export function NoticeBoard() { const notice = useContext(NoticeContext); return <div style={{background: "#fffbeb", padding: "10px"}}>📢 공지: {notice}</div>; }

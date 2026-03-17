@@ -1,0 +1,1 @@
+export const initialCart = [{ id: 1, name: "사과", price: 1000, quantity: 1 }, { id: 2, name: "바나나", price: 1500, quantity: 2 }];

@@ -1,0 +1,1 @@
+import RenderingProcess from "./components/RenderingProcess"; export default function App() { return <RenderingProcess />; }

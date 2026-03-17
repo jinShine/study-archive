@@ -1,0 +1,1 @@
+import { Sidebar } from "./Sidebar"; export function Layout() { return <Sidebar />; }

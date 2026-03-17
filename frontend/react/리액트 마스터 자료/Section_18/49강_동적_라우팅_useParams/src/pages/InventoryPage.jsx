@@ -1,0 +1,1 @@
+export default function InventoryPage() { return <h1>Inventory Main</h1>; }

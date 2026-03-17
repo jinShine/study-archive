@@ -1,0 +1,1 @@
+import FocusManager from "./components/FocusManager"; export default function App() { return <FocusManager />; }

@@ -1,0 +1,1 @@
+import MemoTest from "./components/MemoTest"; export default function App() { return <MemoTest />; }

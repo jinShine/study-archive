@@ -1,0 +1,1 @@
+import SecretCounter from "./components/SecretCounter"; export default function App() { return <SecretCounter />; }

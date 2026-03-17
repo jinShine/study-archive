@@ -1,0 +1,1 @@
+import { Outlet } from 'react-router'; export default function Layout() { return <div style={{ border: '2px solid blue', minHeight: '100vh' }}><Outlet /></div>; }

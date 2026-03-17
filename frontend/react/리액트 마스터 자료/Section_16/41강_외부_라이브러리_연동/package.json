@@ -1,0 +1,1 @@
+{"name": "external-lib-demo", "type": "module", "dependencies": {"react": "^18.2.0", "react-dom": "^18.2.0", "flatpickr": "^4.6.13"}, "devDependencies": {"vite": "^4.0.0"}}

@@ -1,0 +1,1 @@
+import ParentApp from "./components/ParentApp"; export default function App() { return <ParentApp />; }

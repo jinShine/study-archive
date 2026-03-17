@@ -1,0 +1,1 @@
+import { UserName } from "./UserName"; export function UserPanel() { return <UserName />; }

@@ -1,0 +1,1 @@
+import AdvancedCafeteria from "./pages/AdvancedCafeteria"; export default function App() { return <AdvancedCafeteria />; }

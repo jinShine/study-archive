@@ -1,0 +1,5 @@
+export const ACTIONS = {
+  ADD_RICE: "ADD_RICE",
+  REFILL_SOUP: "REFILL_SOUP",
+  CHANGE_SIDE: "CHANGE_SIDE",
+};

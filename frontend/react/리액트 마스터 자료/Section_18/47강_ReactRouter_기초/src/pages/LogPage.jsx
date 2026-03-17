@@ -1,0 +1,1 @@
+export default function LogPage() { return <h1>📜 시스템 로그 페이지</h1>; }

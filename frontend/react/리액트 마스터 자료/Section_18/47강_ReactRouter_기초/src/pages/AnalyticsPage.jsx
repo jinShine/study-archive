@@ -1,0 +1,1 @@
+export default function AnalyticsPage() { return <h1>📊 데이터 분석 페이지</h1>; }

@@ -1,0 +1,1 @@
+export default function InventoryPage() { return <h1>📦 재고 관리 페이지</h1>; }

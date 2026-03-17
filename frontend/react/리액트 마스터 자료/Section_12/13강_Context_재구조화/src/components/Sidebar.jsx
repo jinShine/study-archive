@@ -1,0 +1,1 @@
+import { UserPanel } from "./UserPanel"; export function Sidebar() { return <UserPanel />; }
