@@ -1,0 +1,11 @@
+server:
+  port: 8080
+
+logging:
+  level:
+    root: INFO
+    com.example.studydiary: DEBUG    # 우리 코드는 DEBUG 레벨
+
+# 파일 저장 경로
+file:
+  upload-dir: ./uploads-dev

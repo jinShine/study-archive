@@ -168,7 +168,7 @@ dependencies {
 
 ## Step 2. 설정 파일 구성
 
-> 📖 **복습 주제: [02. Resources 폴더 구조](../phase1-기초체력/02-resources-folder/) 참고!**
+> 📖 **복습 주제: [02. Resources 폴더 구조](../phase1-기초체력/02-resources/) 참고!**
 
 ### 리마인드: application.yml이 하는 일
 
@@ -269,7 +269,7 @@ application-prod.yml → 운영용 (WARN 로그, Swagger 비활성화)
 
 ## Step 3. 로깅 설정
 
-> 📖 **복습 주제: [03. Logging과 설정 파일 심화](../phase1-기초체력/03-logging/) 참고!**
+> 📖 **복습 주제: [03. 첫 번째 REST API 만들기](../phase1-기초체력/03-first-rest-api/) 참고!**
 
 ### logback-spring.xml
 
@@ -337,7 +337,7 @@ TRACE → DEBUG → INFO → WARN → ERROR
 
 ## Step 4. Entity와 IoC/DI 설계
 
-> 📖 **복습 주제: [04. IoC와 DI](../phase1-기초체력/04-ioc-di/) 참고!**
+> 📖 **복습 주제: [04. IoC와 DI](../phase1-기초체력/04-ioc-and-di/) 참고!**
 
 ### Category enum
 
