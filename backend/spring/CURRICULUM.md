@@ -61,10 +61,10 @@ Phase 6: 미니 프로젝트     ██████████ (40~44)
 
 | # | 주제 | 핵심 키워드 | 상태 |
 |---|------|------------|------|
-| 17 | **RDBMS 기초와 SQL** | MySQL, DDL/DML, JOIN, 인덱스 기본, Docker MySQL | ⬜ |
-| 18 | **SQL 심화** | 서브쿼리, GROUP BY/HAVING, 윈도우 함수(ROW_NUMBER/RANK/LAG/LEAD), CTE, 재귀 CTE, EXPLAIN 실행 계획 | ⬜ |
-| 19 | **DB 설계와 정규화** | ERD, 1NF~BCNF, 반정규화, 테이블 설계 실습 | ⬜ |
-| 20 | **JPA 기초 — ORM 개념과 Entity** | 패러다임 불일치(5가지), JdbcTemplate→JPA 비교, @Entity, @Id, @GeneratedValue, @Column, @Enumerated, ddl-auto | ⬜ |
+| 17 | **RDBMS 기초와 SQL** | MySQL, DDL/DML, JOIN, 인덱스 기본, Docker MySQL | ✅ 완료 |
+| 18 | **SQL 심화** | 서브쿼리, GROUP BY/HAVING, 윈도우 함수(ROW_NUMBER/RANK/LAG/LEAD), CTE, 재귀 CTE, EXPLAIN 실행 계획 | ✅ 완료 |
+| 19 | **DB 모델링과 정규화** | ERD, 엔티티 관계(1:1/1:N/N:M), 1NF~BCNF, 가짜/진짜 중복, 반정규화, 네이밍 규칙, 테이블 설계 실습 | ✅ 완료 |
+| 20 | **JPA 기초 — ORM 개념과 Entity** | 패러다임 불일치(5가지), JdbcTemplate→JPA 비교, @Entity, @Id, @GeneratedValue, @Column, @Enumerated, ddl-auto | ✅ 완료 |
 | 21 | **JPA 동작 원리** | 영속성 컨텍스트(3개 저장소), Entity Lifecycle, 1차 캐시, Dirty Checking, 쓰기 지연, JDBC Batch, @DynamicUpdate, Proxy, merge vs 변경감지, OSIV | ⬜ |
 | 22 | **트랜잭션과 동시성** | @Transactional, ACID, isolation level, propagation, 낙관적/비관적 락, Gap Lock, Named Lock, Redis 분산 락(Redisson) | ⬜ |
 | 23 | **Spring Data JPA** | JpaRepository, 쿼리 메서드, @Query(JPQL/Native), Projection, Specification, Pageable, Page vs Slice, Cursor 기반 페이징 | ⬜ |
