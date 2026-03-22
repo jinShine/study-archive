@@ -895,6 +895,23 @@ study_log ──||───<○── comment
 study_log ──<○───<○── tag (중간: study_log_tag)
 ```
 
+#### BaseEntity (가장 먼저 만든다!)
+
+```java
+@MappedSuperclass
+@EntityListeners(AuditingEntityListener.class)
+@Getter
+public abstract class BaseEntity {
+
+    @CreatedDate
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    private LocalDateTime updatedAt;
+}
+```
+
 #### Member Entity
 
 ```java
@@ -902,7 +919,7 @@ study_log ──<○───<○── tag (중간: study_log_tag)
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "member")
-public class Member {
+public class Member extends BaseEntity {   // ← BaseEntity 상속!
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -917,15 +934,13 @@ public class Member {
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;
+    // createdAt, updatedAt은 BaseEntity에서 자동!
 
     @Builder
     public Member(String name, String email, String password) {
         this.name = name;
         this.email = email;
         this.password = password;
-        this.createdAt = LocalDateTime.now();
     }
 }
 ```
@@ -937,7 +952,7 @@ public class Member {
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "study_log")
-public class StudyLog {
+public class StudyLog extends BaseEntity {   // ← BaseEntity 상속!
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -959,10 +974,7 @@ public class StudyLog {
     @Column(nullable = false)
     private LocalDate studyDate;
 
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    private LocalDateTime updatedAt;
+    // createdAt, updatedAt은 BaseEntity에서 자동!
 
     // ⚠️ 연관관계(@ManyToOne 등)는 24번에서 추가한다
     // 지금은 FK를 직접 필드로 가진다
@@ -978,7 +990,6 @@ public class StudyLog {
         this.studyTime = studyTime;
         this.studyDate = studyDate;
         this.memberId = memberId;
-        this.createdAt = LocalDateTime.now();
     }
 
     public void update(String title, String content, Category category, int studyTime) {
@@ -986,7 +997,7 @@ public class StudyLog {
         this.content = content;
         this.category = category;
         this.studyTime = studyTime;
-        this.updatedAt = LocalDateTime.now();
+        // updatedAt? @LastModifiedDate가 자동 갱신!
     }
 }
 ```
@@ -1126,6 +1137,87 @@ public class Application { ... }
 ```
 
 > 이렇게 하면 `createdAt`과 `updatedAt`을 직접 set하지 않아도 자동으로 채워진다!
+
+### BaseEntity — 실무 필수 패턴 🔴
+
+모든 Entity에 `createdAt`, `updatedAt`이 필요하다. 매번 복붙하면 귀찮으니까 **공통 부모 클래스**로 뽑는다.
+
+```java
+@MappedSuperclass   // "이건 테이블이 아니라, 자식에게 필드만 물려주는 클래스야"
+@EntityListeners(AuditingEntityListener.class)
+@Getter
+public abstract class BaseEntity {
+
+    @CreatedDate
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    private LocalDateTime updatedAt;
+}
+```
+
+```
+@MappedSuperclass가 뭔데?
+
+비유: 유전자
+  → 부모의 유전자(createdAt, updatedAt)가 자식에게 전달된다
+  → 하지만 "부모"라는 별도의 사람(테이블)이 생기는 건 아니다
+  → BaseEntity 테이블은 안 생긴다! 필드만 상속될 뿐.
+
+vs @Entity 상속(@Inheritance):
+  → 부모 테이블이 실제로 생긴다
+  → 목적이 다르다 (이건 24번에서 배움)
+```
+
+이제 모든 Entity가 상속만 하면 끝이다:
+
+```java
+@Entity
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class StudyLog extends BaseEntity {   // ← 상속!
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false, length = 200)
+    private String title;
+
+    // ... createdAt, updatedAt은 BaseEntity에서 자동으로 가져온다!
+
+    public void update(String title) {
+        this.title = title;
+        // updatedAt? 안 써도 된다. @LastModifiedDate가 자동 갱신!
+    }
+}
+
+@Entity
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class Member extends BaseEntity {     // ← 상속!
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false, length = 50)
+    private String name;
+
+    // ... 역시 createdAt, updatedAt이 자동으로 있다!
+}
+```
+
+```
+결과:
+  ✅ 모든 Entity에 createdAt, updatedAt이 자동으로 들어간다
+  ✅ 코드 중복 없음
+  ✅ 시간 기록 까먹을 일 없음
+  ✅ 나중에 createdBy(작성자) 같은 필드를 추가할 때 BaseEntity만 수정하면 됨
+```
+
+> 🔴 **실무에서 BaseEntity가 없는 프로젝트는 거의 없다.** 프로젝트 시작할 때 가장 먼저 만드는 클래스 중 하나다.
 
 ### @Lob — 대용량 데이터
 
