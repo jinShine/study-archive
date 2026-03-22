@@ -1,0 +1,8 @@
+/* =========================================================
+ * [Tailwind CSS v4 최신 빌드 엔진]
+ * 이 한 줄로 Oxide 엔진이 가동되며, 모든 스타일링 파편화를 막습니다.
+ * ========================================================= */
+@import "tailwindcss";
+
+:root { --background: #f8fafc; --foreground: #0f172a; }
+body { color: var(--foreground); background: var(--background); }

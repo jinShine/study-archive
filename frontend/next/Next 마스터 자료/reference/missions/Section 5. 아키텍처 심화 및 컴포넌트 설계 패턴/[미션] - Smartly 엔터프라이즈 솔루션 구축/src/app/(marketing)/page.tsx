@@ -1,1 +1,0 @@
-export default function Home() { return <div><h1 className='text-9xl font-black mb-10 leading-none tracking-tight text-slate-900'>Build Your<br/>Smart Future.</h1><a href='/dashboard/devices' className='bg-blue-600 text-white px-14 py-6 rounded-full font-black shadow-2xl inline-block hover:scale-110 transition-transform'>Open Console Access</a></div>; }

@@ -1,0 +1,16 @@
+/* =========================================================
+ * [1] Tailwind CSS v4 최신 빌드 엔진 가동
+ * =========================================================
+ * 과거 버전의 복잡한 tailwind.config.ts 파일이나 여러 줄의 지시어 없이,
+ * 오직 이 @import 한 줄만으로 Next.js 프로젝트 전체에 Tailwind가 주입됩니다.
+ */
+@import "tailwindcss";
+
+:root {
+  --background: #f8fafc;
+  --foreground: #0f172a;
+}
+body {
+  color: var(--foreground);
+  background: var(--background);
+}
