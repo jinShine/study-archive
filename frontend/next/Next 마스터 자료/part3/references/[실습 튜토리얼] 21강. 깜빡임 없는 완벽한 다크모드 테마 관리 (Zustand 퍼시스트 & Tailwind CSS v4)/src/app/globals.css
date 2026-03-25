@@ -1,0 +1,11 @@
+@import "tailwindcss";
+
+/* 이 한 줄이 핵심입니다! .dark 클래스가 있을 때 다크모드 발동 */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  /* 다크모드 전환 시 부드러운 애니메이션 효과 적용 */
+  body {
+    @apply bg-white text-black dark:bg-gray-900 dark:text-white transition-colors duration-300 ease-in-out;
+  }
+}

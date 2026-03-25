@@ -1,0 +1,1 @@
+export default function PhotoPage() { return <div className="p-20 text-center text-4xl font-bold">FULL PAGE VIEW</div>; }
