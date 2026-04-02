@@ -69,7 +69,7 @@ Phase 6: 미니 프로젝트     ██████████ (40~44)
 | 22 | **트랜잭션과 동시성** | @Transactional, ACID, isolation level, propagation, 낙관적/비관적 락, Gap Lock, Named Lock, Redis 분산 락(Redisson) | ✅ 완료 |
 | 23 | **Spring Data JPA** | JpaRepository, 쿼리 메서드, @Query(JPQL/Native), Projection, Specification, Pageable, Page vs Slice, Cursor 기반 페이징 | ✅ 완료 |
 | 24 | **연관 관계 매핑과 N+1 문제** | @OneToMany, @ManyToOne, @OneToOne LAZY 주의사항, cascade, orphanRemoval, Fetch 전략, Proxy 동작, Fetch Join, @EntityGraph, Batch Size | ✅ 완료 |
-| 25 | **QueryDSL** | JPAQueryFactory, Q클래스, BooleanExpression, 동적 쿼리, Projections, @QueryProjection, 페이징, 집계 | ⬜ |
+| 25 | **QueryDSL** | JPAQueryFactory, Q클래스, BooleanExpression, 동적 쿼리, Projections, @QueryProjection, 페이징, 집계 | ✅ 완료 |
 | 26 | **Spring vs Hibernate 총정리** | 계층별 책임, 트랜잭션 경계 vs 엔티티 관리, Flush/커넥션/예외 처리, readOnly 최적화(Spring vs Hibernate 레벨), 리플리카 라우팅, 실무 패턴 | ⬜ |
 
 ---
