@@ -1,0 +1,30 @@
+{
+  "permissions": {
+    "additionalDirectories": [
+      "/Users/buzz/Documents/Private/projects/study-archive/backend/spring/phase4-실전심화",
+      "/Users/buzz/Documents/Private/projects/study-archive/backend/java/phase0-1-기초체력/J01-jvm-and-execution",
+      "/Users/buzz/Documents/Private/projects/study-archive/backend/java/phase0-1-기초체력/J02-variables-types-operators",
+      "/Users/buzz/Documents/Private/projects/study-archive/backend/java/phase0-1-기초체력/J03-control-flow",
+      "/Users/buzz/Documents/Private/projects/study-archive/backend/java/phase0-1-기초체력/J04-array-and-string",
+      "/Users/buzz/Documents/Private/projects/study-archive/backend/java/phase0-1-기초체력/J05-methods-and-scope",
+      "/Users/buzz/Documents/Private/projects/study-archive/backend/java/phase0-2-OOP마스터/J08-inheritance-polymorphism",
+      "/Users/buzz/Documents/Private/projects/study-archive/backend/java/phase0-2-OOP마스터/J09-abstract-and-interface",
+      "/Users/buzz/Documents/Private/projects/study-archive/backend/java/phase0-2-OOP마스터/J10-encapsulation-immutable",
+      "/Users/buzz/Documents/Private/projects/study-archive/backend/java/phase0-2-OOP마스터/J11-object-class-methods",
+      "/Users/buzz/Documents/Private/projects/study-archive/backend/java/phase0-2-OOP마스터/J12-enum-and-inner-class",
+      "/Users/buzz/Documents/Private/projects/study-archive/backend/java/phase0-3-핵심API/J14-collection-map",
+      "/Users/buzz/Documents/Private/projects/study-archive/backend/java/phase0-3-핵심API/J15-exception-handling",
+      "/Users/buzz/Documents/Private/projects/study-archive/backend/java/phase0-3-핵심API/J16-generics",
+      "/Users/buzz/Documents/Private/projects/study-archive/backend/java/phase0-3-핵심API/J17-lambda-functional",
+      "/Users/buzz/Documents/Private/projects/study-archive/backend/java/phase0-3-핵심API/J18-stream-api",
+      "/Users/buzz/Documents/Private/projects/study-archive/backend/java/phase0-3-핵심API/J19-optional",
+      "/Users/buzz/Documents/Private/projects/study-archive/backend/java/phase0-4-심화/J20-io-and-file",
+      "/Users/buzz/Documents/Private/projects/study-archive/backend/java/phase0-4-심화/J21-concurrency-basics",
+      "/Users/buzz/Documents/Private/projects/study-archive/backend/java/phase0-4-심화/J22-concurrency-advanced",
+      "/Users/buzz/Documents/Private/projects/study-archive/backend/java/phase0-4-심화/J23-design-pattern-creational",
+      "/Users/buzz/Documents/Private/projects/study-archive/backend/java/phase0-4-심화/J24-design-pattern-structural-behavioral",
+      "/Users/buzz/Documents/Private/projects/study-archive/backend/java/phase0-4-심화/J25-java-version-features",
+      "/Users/buzz/Documents/Private/projects/study-archive/backend/java/phase0-4-심화/J26-effective-java"
+    ]
+  }
+}

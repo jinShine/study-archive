@@ -1,616 +1,555 @@
-# 04. IoC와 DI 깊게 파기
+# 04. IoC와 DI 깊게 파기 — "내가 안 만들어. Spring이 갖다 줘"
 
-> **IoC(Inversion of Control)** — 객체의 생성과 관리를 개발자가 아닌 프레임워크(컨테이너)가 대신 해주는 것
-> **DI(Dependency Injection)** — IoC를 구현하는 방법으로, 필요한 객체를 외부에서 주입받는 것
-
-Spring의 심장이다. 이걸 모르면 나머지가 전부 공중에 뜬다.
+> **키워드**: `IoC` `DI` `@Component` `@Service` `@Repository` `@Autowired` `Bean` `생성자 주입`
 
 ---
 
-## 1. IoC가 왜 필요한가?
+## 핵심만 한 문장
 
-### 기존 방식 — 개발자가 직접 객체 생성
+**Spring이 객체를 대신 만들어서(@Component), 필요한 곳에 알아서 넣어주는 것(DI) — 이게 Spring의 존재 이유다**
+
+---
+
+## 학습 우선순위
+
+| 등급 | 섹션 | 의미 |
+|------|------|------|
+| 🔴 필수 | 1~4장 (왜 필요한가, Bean, DI, 생성자 주입) | Spring의 심장. 이것 모르면 나머지 전부 이해 불가 |
+| 🟡 이해 | 5장 (Bean Scope, 생명주기) | 가끔 필요 |
+| 🟢 참고 | 6장 (@Qualifier, @Primary) | 특수 상황에서 필요 |
+
+> 💡 **03번과의 연결**: CRUD API에서 `new HashMap<>()`으로 직접 저장소를 만들었다. 이걸 Spring이 대신 관리하게 바꾸는 게 이번 주제다!
+
+---
+
+## 1장. 왜 필요한가? — new의 문제 🔴
+
+### 비유
+
+```
+❌ new 방식 = 식당에서 직접 농사짓기
+  "토마토 필요해" → 직접 밭에 가서 키움 → 수확 → 요리
+  → 농사짓다 요리할 시간이 없다!
+
+✅ DI 방식 = 식자재 배달 받기
+  "토마토 필요해" → 배달 업체(Spring)가 갖다 줌 → 바로 요리
+  → 요리(비즈니스 로직)에만 집중!
+```
+
+### 코드로 보면
 
 ```java
-public class OrderService {
-    // OrderService가 직접 new로 생성 → 강한 결합(tight coupling)
-    private final OrderRepository repository = new OrderRepository();
-
-    public void createOrder(Order order) {
-        repository.save(order);
+// ❌ 직접 생성 (강한 결합)
+public class StudentService {
+    private final StudentRepository repository = new StudentRepository();
+    //                                            ↑ 직접 만듦!
+    
+    public Student findById(Long id) {
+        return repository.findById(id);
     }
 }
 ```
 
-**문제점:**
-- `OrderService`가 `OrderRepository`의 **구체적인 클래스**를 알고 있다
-- `OrderRepository`를 `JpaOrderRepository`로 바꾸고 싶으면? → `OrderService` 코드를 수정해야 한다
-- 테스트할 때 가짜(Mock) 객체로 바꿀 수 없다
-
-### IoC 방식 — 컨테이너가 객체를 관리
+**문제:**
+- `StudentRepository`를 `JpaStudentRepository`로 바꾸고 싶으면? → **코드 수정 필요**
+- 테스트에서 가짜 저장소를 쓰고 싶으면? → **불가능**
+- `StudentService`가 "누구를 쓸지" 직접 결정함 → **결합도 높음**
 
 ```java
-public class OrderService {
-    // 인터페이스에만 의존 → 느슨한 결합(loose coupling)
-    private final OrderRepository repository;
-
-    // 생성자를 통해 외부에서 주입받음 (DI)
-    public OrderService(OrderRepository repository) {
+// ✅ Spring이 주입 (느슨한 결합)
+@Service
+public class StudentService {
+    private final StudentRepository repository;
+    //                                ↑ 직접 안 만듦!
+    
+    // Spring이 알아서 넣어줌 (생성자 주입)
+    public StudentService(StudentRepository repository) {
         this.repository = repository;
     }
-
-    public void createOrder(Order order) {
-        repository.save(order);
+    
+    public Student findById(Long id) {
+        return repository.findById(id);
     }
 }
 ```
 
-```
-[ Spring 컨테이너 (IoC Container) ]
-    │
-    ├── OrderRepository 빈 생성
-    │
-    └── OrderService 빈 생성
-            └── OrderRepository를 주입 (DI)
-```
-
-> 핵심: **"내가 필요한 걸 내가 만들지 않는다. 누군가 갖다 준다."**
+**장점:**
+- `StudentRepository` 구현체가 바뀌어도 → **코드 수정 불필요**
+- 테스트에서 가짜 객체 주입 가능
+- `StudentService`는 "누구를 쓸지" 몰라도 됨 → **결합도 낮음**
 
 ---
 
-## 2. Spring IoC 컨테이너
+## 2장. Bean이란? 🔴
 
-### ApplicationContext
+### 비유
 
-Spring의 IoC 컨테이너 = `ApplicationContext`
+```
+Bean = Spring이 관리하는 객체
 
-```java
-// 컨테이너 직접 조회 (실무에서는 거의 안 씀, 이해용)
-ApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
-OrderService orderService = context.getBean(OrderService.class);
+Spring 컨테이너 = 큰 창고
+Bean = 창고에 보관된 물건
+
+"StudentService 필요해!" → Spring: "창고에서 꺼내줄게"
 ```
 
-### 컨테이너가 하는 일
-
-| 역할 | 설명 |
-|------|------|
-| **빈(Bean) 등록** | 객체를 생성하고 컨테이너에 등록 |
-| **의존 관계 주입** | 빈 간의 의존 관계를 자동으로 연결 |
-| **생명주기 관리** | 빈의 생성 → 초기화 → 사용 → 소멸 관리 |
-
-### BeanFactory vs ApplicationContext
-
-| 구분 | BeanFactory | ApplicationContext |
-|------|------------|-------------------|
-| **역할** | IoC 컨테이너의 최상위 인터페이스 | BeanFactory + 부가 기능 |
-| **빈 로딩** | Lazy Loading (호출 시 생성) | Eager Loading (시작 시 전부 생성) |
-| **부가 기능** | 없음 | 이벤트, 메시지 국제화, 환경변수 처리 등 |
-| **실무에서** | 직접 사용 안 함 | **이것을 사용** |
-
-> 면접 포인트: "ApplicationContext는 BeanFactory를 상속한 확장 컨테이너이며, 실무에서는 ApplicationContext를 사용합니다."
-
----
-
-## 3. 빈(Bean) 등록 방법
-
-### 방법 1: `@Component` + 컴포넌트 스캔 (자동 등록)
+### Bean 등록하는 방법
 
 ```java
-@Component  // Spring이 자동으로 빈으로 등록
-public class OrderRepository {
-    public void save(Order order) {
-        // DB 저장 로직
-    }
-}
-```
-
-```java
+// 방법 1: @Component (가장 기본)
 @Component
-public class OrderService {
-    private final OrderRepository repository;
+public class StudentRepository {
+    // Spring이 이 객체를 자동으로 만들어서 창고에 보관
+}
 
-    @Autowired  // 자동 주입
-    public OrderService(OrderRepository repository) {
+// 방법 2: @Service (비즈니스 로직)
+@Service
+public class StudentService {
+    // @Service = @Component + "이건 비즈니스 로직이다"라는 의미
+}
+
+// 방법 3: @Repository (DB 접근)
+@Repository
+public class StudentJpaRepository {
+    // @Repository = @Component + "이건 DB 접근 코드다"라는 의미
+}
+
+// 방법 4: @Controller (API)
+@RestController
+public class StudentController {
+    // @RestController 안에 @Controller가 있고, @Controller 안에 @Component가 있다
+}
+```
+
+### 관계도
+
+```
+@Component ← 기본
+  ├── @Service      ← 비즈니스 로직 (Service 계층)
+  ├── @Repository   ← DB 접근 (Repository 계층)
+  └── @Controller   ← 요청 처리 (Controller 계층)
+
+전부 @Component의 특수화!
+기능 차이 없고, "역할"을 명시하는 것
+```
+
+---
+
+## 3장. DI (의존성 주입) 🔴
+
+### 비유
+
+```
+DI = 배달
+
+StudentService: "나 StudentRepository 필요해!"
+Spring:         "알겠어, 만들어서 갖다 줄게"
+  ↓
+StudentService 생성자에 StudentRepository를 넣어줌
+```
+
+### 3가지 주입 방법
+
+```java
+// ✅ 1. 생성자 주입 (추천! 실무 표준)
+@Service
+public class StudentService {
+    private final StudentRepository repository;
+    
+    // 생성자가 1개면 @Autowired 생략 가능!
+    public StudentService(StudentRepository repository) {
+        this.repository = repository;
+    }
+}
+
+// 🔶 2. 필드 주입 (간단하지만 비추천)
+@Service
+public class StudentService {
+    @Autowired
+    private StudentRepository repository;
+    // 테스트하기 어려움, final 못 씀
+}
+
+// 🔶 3. Setter 주입 (거의 안 씀)
+@Service
+public class StudentService {
+    private StudentRepository repository;
+    
+    @Autowired
+    public void setRepository(StudentRepository repository) {
         this.repository = repository;
     }
 }
 ```
 
-#### `@Component`의 파생 어노테이션
+### 왜 생성자 주입이 최고인가?
 
-| 어노테이션 | 용도 | 예시 |
-|-----------|------|------|
-| `@Component` | 일반적인 빈 등록 | 유틸리티 클래스 |
-| `@Controller` | 웹 요청 처리 (MVC 컨트롤러) | `UserController` |
-| `@RestController` | REST API 컨트롤러 (`@Controller` + `@ResponseBody`) | `ApiController` |
-| `@Service` | 비즈니스 로직 계층 | `OrderService` |
-| `@Repository` | 데이터 접근 계층 + **예외 변환** 기능 | `OrderRepository` |
-| `@Configuration` | 설정 클래스 (빈 수동 등록용) | `AppConfig` |
+| 비교 | 생성자 주입 | 필드 주입 |
+|------|-----------|----------|
+| `final` 사용 | ✅ 가능 (불변 보장) | ❌ 불가능 |
+| 테스트 | ✅ 쉬움 (생성자에 Mock 전달) | ❌ 어려움 (리플렉션 필요) |
+| 순환 참조 감지 | ✅ 앱 시작 시 즉시 발견 | ❌ 런타임에 발견 |
+| 실무 권장 | **✅ 표준** | ❌ 비추천 |
 
-> `@Service`, `@Repository`, `@Controller`는 전부 내부에 `@Component`가 붙어있다.
-> 기능은 같지만, **계층을 명확하게 표현**하기 위해 구분해서 쓴다.
+### Lombok으로 더 간단하게
 
 ```java
-// @Service 내부를 까보면
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-@Component   // ← 여기! @Component가 있다
-public @interface Service {
+// @RequiredArgsConstructor = final 필드의 생성자를 자동 생성
+@Service
+@RequiredArgsConstructor
+public class StudentService {
+    private final StudentRepository repository;
+    // ↑ 생성자를 직접 안 써도 Lombok이 만들어줌!
+    
+    public Student findById(Long id) {
+        return repository.findById(id);
+    }
+}
+```
+
+**이게 실무에서 가장 많이 쓰는 패턴이다!**
+
+---
+
+## 4장. 따라 쳐보기: 03번 코드를 DI로 개선 🔴
+
+### 03번에서 만든 코드 (문제)
+
+```java
+// ❌ Controller가 직접 HashMap을 만들어서 사용
+@RestController
+@RequestMapping("/students")
+public class StudentController {
+    private final Map<Long, Student> studentMap = new HashMap<>();  // ← 직접 생성!
     // ...
 }
 ```
 
-### 방법 2: `@Bean` + `@Configuration` (수동 등록)
+### 개선: 3계층으로 분리
+
+```
+Controller → Service → Repository
+
+각 계층을 Bean으로 등록하고
+Spring이 DI로 연결해줌!
+```
+
+### Step 1. StudentRepository (저장소)
 
 ```java
-@Configuration
-public class AppConfig {
+package com.example.demo;
 
-    @Bean  // 메서드의 리턴 객체를 빈으로 등록
-    public OrderRepository orderRepository() {
-        return new JpaOrderRepository();
+import org.springframework.stereotype.Repository;
+import java.util.*;
+
+@Repository  // ← Spring이 이 객체를 Bean으로 관리
+public class StudentRepository {
+    
+    private final Map<Long, Student> store = new HashMap<>();
+    private Long nextId = 1L;
+    
+    public Student save(Student student) {
+        student.setId(nextId++);
+        store.put(student.getId(), student);
+        return student;
     }
-
-    @Bean
-    public OrderService orderService() {
-        // 직접 의존 관계를 설정
-        return new OrderService(orderRepository());
+    
+    // Optional = "값이 있을 수도, 없을 수도 있다"를 표현
+    // store.get(id)가 null이면 Optional.empty() 반환
+    public Optional<Student> findById(Long id) {
+        return Optional.ofNullable(store.get(id));
+    }
+    
+    public List<Student> findAll() {
+        return new ArrayList<>(store.values());
+    }
+    
+    public void deleteById(Long id) {
+        store.remove(id);
+    }
+    
+    public boolean existsById(Long id) {
+        return store.containsKey(id);
     }
 }
 ```
 
-### 자동 vs 수동 — 언제 뭘 쓰나?
+### Step 2. StudentService (비즈니스 로직)
 
-| 상황 | 방법 | 이유 |
-|------|------|------|
-| 일반적인 비즈니스 로직 | `@Component` 자동 등록 | 간편하고, 대부분의 빈은 이걸로 충분 |
-| 외부 라이브러리 빈 등록 | `@Bean` 수동 등록 | 외부 클래스에 `@Component` 못 붙이니까 |
-| 같은 인터페이스의 구현체가 여러 개 | `@Bean` 수동 등록 | 어떤 구현체를 쓸지 명시적으로 설정 |
-| 기술적 설정 (DataSource, ObjectMapper 등) | `@Bean` 수동 등록 | 한눈에 설정을 볼 수 있어야 하니까 |
+```java
+package com.example.demo;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import java.util.List;
+
+@Service                      // ← Bean 등록
+@RequiredArgsConstructor      // ← 생성자 자동 생성 (DI!)
+public class StudentService {
+    
+    private final StudentRepository repository;  // ← Spring이 주입
+    
+    public Student create(Student student) {
+        return repository.save(student);
+    }
+    
+    public Student getById(Long id) {
+        return repository.findById(id)
+            .orElseThrow(() -> new RuntimeException("학생을 찾을 수 없습니다: id=" + id));
+    }
+    
+    public List<Student> getAll() {
+        return repository.findAll();
+    }
+    
+    public Student update(Long id, Student student) {
+        if (!repository.existsById(id)) {
+            throw new RuntimeException("학생을 찾을 수 없습니다: id=" + id);
+        }
+        student.setId(id);
+        return repository.save(student);
+    }
+    
+    public void delete(Long id) {
+        if (!repository.existsById(id)) {
+            throw new RuntimeException("학생을 찾을 수 없습니다: id=" + id);
+        }
+        repository.deleteById(id);
+    }
+}
+```
+
+### Step 3. StudentController (요청 처리만!)
+
+```java
+package com.example.demo;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
+import java.util.List;
+
+@RestController
+@RequestMapping("/students")
+@RequiredArgsConstructor      // ← DI!
+public class StudentController {
+    
+    private final StudentService service;  // ← Spring이 주입
+    
+    @PostMapping
+    public Student create(@RequestBody Student student) {
+        return service.create(student);
+    }
+    
+    @GetMapping
+    public List<Student> getAll() {
+        return service.getAll();
+    }
+    
+    @GetMapping("/{id}")
+    public Student getById(@PathVariable Long id) {
+        return service.getById(id);
+    }
+    
+    @PutMapping("/{id}")
+    public Student update(@PathVariable Long id, @RequestBody Student student) {
+        return service.update(id, student);
+    }
+    
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
+        service.delete(id);
+    }
+}
+```
+
+### 동작 흐름
+
+```
+POST /students + { "name": "홍길동" }
+  ↓
+Spring: "StudentController에 StudentService 주입해뒀지"
+  ↓
+StudentController.create() 호출
+  ↓
+Spring: "StudentService에 StudentRepository 주입해뒀지"
+  ↓
+StudentService.create() → StudentRepository.save() 호출
+  ↓
+응답 반환
+```
+
+### 테스트 (Postman)
+
+```bash
+# 등록
+POST http://localhost:8080/students
+Body: { "name": "홍길동", "email": "hong@example.com", "grade": 3 }
+
+# 응답: { "id": 1, "name": "홍길동", ... }
+```
+
+**03번과 동일하게 작동하지만, 코드가 계층별로 깔끔하게 분리됐다!**
 
 ---
 
-## 4. DI(의존성 주입) 3가지 방법
+## 5장. Bean Scope와 생명주기 🟡
 
-### 4-1. 생성자 주입 (Constructor Injection) ⭐ 추천
-
-```java
-@Service
-public class OrderService {
-    private final OrderRepository repository;  // final 가능!
-
-    // 생성자가 1개면 @Autowired 생략 가능 (Spring 4.3+)
-    public OrderService(OrderRepository repository) {
-        this.repository = repository;
-    }
-}
-```
-
-### 4-2. 필드 주입 (Field Injection) — 비추천
-
-```java
-@Service
-public class OrderService {
-    @Autowired  // 필드에 직접 주입
-    private OrderRepository repository;  // final 불가!
-}
-```
-
-### 4-3. Setter 주입 (Setter Injection) — 거의 안 씀
-
-```java
-@Service
-public class OrderService {
-    private OrderRepository repository;
-
-    @Autowired
-    public void setRepository(OrderRepository repository) {
-        this.repository = repository;
-    }
-}
-```
-
-### 3가지 비교
-
-| 구분 | 생성자 주입 ⭐ | 필드 주입 | Setter 주입 |
-|------|-------------|----------|------------|
-| **`final` 사용** | ✅ 가능 | ❌ 불가 | ❌ 불가 |
-| **불변성** | ✅ 보장 | ❌ 변경 가능 | ❌ 변경 가능 |
-| **NullPointer 방지** | ✅ 컴파일 시점 체크 | ❌ 런타임에 터짐 | ❌ 런타임에 터짐 |
-| **테스트 용이성** | ✅ new로 직접 생성 가능 | ❌ Spring 없이 테스트 불가 | △ |
-| **순환 참조 감지** | ✅ 앱 시작 시 바로 발견 | ❌ 늦게 발견 | ❌ 늦게 발견 |
-
-> **결론: 생성자 주입만 써라.** Spring 공식 문서에서도 생성자 주입을 권장한다.
-
-### Lombok으로 더 간결하게
-
-```java
-@Service
-@RequiredArgsConstructor  // final 필드의 생성자를 자동 생성
-public class OrderService {
-    private final OrderRepository repository;
-    // 생성자를 안 써도 된다! Lombok이 만들어줌
-}
-```
-
-> 실무에서 가장 많이 보는 패턴: `@Service` + `@RequiredArgsConstructor` + `private final`
-
----
-
-## 5. 같은 타입의 빈이 2개 이상일 때
-
-```java
-public interface PaymentGateway {
-    void pay(int amount);
-}
-
-@Component
-public class KakaoPayGateway implements PaymentGateway {
-    public void pay(int amount) { /* 카카오페이 결제 */ }
-}
-
-@Component
-public class TossPayGateway implements PaymentGateway {
-    public void pay(int amount) { /* 토스페이 결제 */ }
-}
-```
-
-이 상태에서 주입하면?
-
-```java
-@Service
-@RequiredArgsConstructor
-public class PaymentService {
-    private final PaymentGateway gateway;  // 💥 에러! 어떤 빈을 넣어야 해?
-}
-```
-
-> `NoUniqueBeanDefinitionException` — 빈이 2개라 Spring이 뭘 넣어야 할지 모른다
-
-### 해결 방법 3가지
-
-#### 방법 1: `@Qualifier` — 이름으로 지정
-
-```java
-@Service
-public class PaymentService {
-    private final PaymentGateway gateway;
-
-    public PaymentService(@Qualifier("kakaoPayGateway") PaymentGateway gateway) {
-        this.gateway = gateway;
-    }
-}
-```
-
-#### 방법 2: `@Primary` — 기본값 지정
+### Bean Scope (범위)
 
 ```java
 @Component
-@Primary  // 같은 타입이 여러 개면 이걸 기본으로 사용
-public class KakaoPayGateway implements PaymentGateway { ... }
-
-@Component
-public class TossPayGateway implements PaymentGateway { ... }
-```
-
-```java
-@Service
-@RequiredArgsConstructor
-public class PaymentService {
-    private final PaymentGateway gateway;  // KakaoPayGateway가 주입됨
-}
-```
-
-#### 방법 3: 필드명 매칭 — 변수 이름으로 매칭
-
-```java
-@Service
-@RequiredArgsConstructor
-public class PaymentService {
-    // 변수 이름이 "tossPayGateway" → TossPayGateway 빈이 주입됨
-    private final PaymentGateway tossPayGateway;
-}
-```
-
-### 우선순위
-
-```
-@Qualifier > @Primary > 필드명 매칭
-```
-
-> 면접 포인트: "`@Qualifier`가 가장 우선순위가 높고, `@Primary`는 기본값, 필드명 매칭은 최후의 수단입니다."
-
----
-
-## 6. Bean Scope (빈 스코프)
-
-빈이 **언제 생성되고, 얼마나 유지되는가**를 결정한다.
-
-### Singleton (기본값) ⭐
-
-```java
-@Component
-// @Scope("singleton")  ← 생략해도 기본이 싱글톤
-public class OrderService {
+@Scope("singleton")  // 기본값 (생략 가능)
+public class StudentService {
     // 앱 전체에서 딱 1개만 존재
 }
-```
 
-```
-요청 1 → OrderService@1234 ─┐
-요청 2 → OrderService@1234 ─┤  전부 같은 인스턴스!
-요청 3 → OrderService@1234 ─┘
-```
-
-### Prototype
-
-```java
 @Component
-@Scope("prototype")  // 요청할 때마다 새로 생성
-public class PrototypeBean {
-    // ...
+@Scope("prototype")
+public class TemporaryTask {
+    // 요청할 때마다 새로 생성
 }
 ```
 
+| Scope | 설명 | 사용 빈도 |
+|-------|------|----------|
+| `singleton` | 앱 전체에서 1개 (기본값) | **99%** |
+| `prototype` | 요청마다 새로 생성 | 거의 안 씀 |
+| `request` | HTTP 요청마다 1개 | 웹에서 가끔 |
+| `session` | HTTP 세션마다 1개 | 웹에서 가끔 |
+
+**💡 대부분 기본값(singleton)이면 된다!**
+
+### Bean 생명주기
+
 ```
-요청 1 → PrototypeBean@1111
-요청 2 → PrototypeBean@2222  ← 매번 다른 인스턴스!
-요청 3 → PrototypeBean@3333
+Spring 시작
+  ↓
+1. Bean 생성 (@Component 스캔)
+  ↓
+2. 의존성 주입 (DI)
+  ↓
+3. 초기화 (@PostConstruct)
+  ↓
+4. 사용
+  ↓
+5. 소멸 (@PreDestroy)
+  ↓
+Spring 종료
 ```
-
-### 전체 스코프 비교
-
-| Scope | 인스턴스 수 | 생존 범위 | 사용 빈도 |
-|-------|-----------|----------|----------|
-| **singleton** (기본) | 1개 | 스프링 컨테이너와 동일 | ⭐⭐⭐⭐⭐ |
-| **prototype** | 요청마다 새로 | 컨테이너가 생성만, 관리 안 함 | ⭐ |
-| **request** | HTTP 요청당 1개 | 요청 시작 ~ 끝 | ⭐⭐ |
-| **session** | HTTP 세션당 1개 | 세션 유지 기간 | ⭐ |
-
-> **99%는 singleton이다.** prototype은 특수한 경우에만 쓴다.
-
-### ⚠️ Singleton 주의사항 — 상태를 갖지 마라!
 
 ```java
-@Component
-public class OrderService {
-    private int count = 0;  // 💥 위험! 모든 요청이 같은 인스턴스를 쓴다
-
-    public void createOrder() {
-        count++;  // 동시에 여러 스레드가 접근하면 데이터 꼬임!
-    }
-}
-```
-
-> Singleton 빈은 **무상태(stateless)**로 설계해야 한다.
-> 공유 변수를 두면 멀티스레드 환경에서 버그가 생긴다.
-
----
-
-## 7. Bean Lifecycle (빈 생명주기)
-
-```
-1. 스프링 컨테이너 생성
-2. 빈 생성 (생성자 호출)
-3. 의존 관계 주입 (DI)
-4. 초기화 콜백  ← @PostConstruct
-5. 사용
-6. 소멸 콜백    ← @PreDestroy
-7. 스프링 컨테이너 종료
-```
-
-### 초기화 / 소멸 콜백
-
-```java
-@Component
-public class DatabaseClient {
-
-    @PostConstruct  // DI 완료 후 호출 → 초기화 로직
-    public void init() {
-        System.out.println("DB 연결 풀 생성");
-        // 커넥션 풀 설정 등
-    }
-
-    @PreDestroy  // 컨테이너 종료 전 호출 → 정리 로직
-    public void destroy() {
-        System.out.println("DB 연결 풀 정리");
-        // 리소스 해제 등
-    }
-}
-```
-
-### 콜백 방법 비교
-
-| 방법 | 예시 | 추천 |
-|------|------|------|
-| `@PostConstruct` / `@PreDestroy` | 위 예시 | ⭐ 가장 추천 |
-| `InitializingBean` / `DisposableBean` | 인터페이스 구현 | ❌ 옛날 방식 |
-| `@Bean(initMethod, destroyMethod)` | 수동 등록 시 | 외부 라이브러리용 |
-
----
-
-## 8. 컴포넌트 스캔 동작 원리
-
-```java
-@SpringBootApplication  // 이 안에 @ComponentScan이 포함되어 있다!
-public class MyApplication {
-    public static void main(String[] args) {
-        SpringApplication.run(MyApplication.class, args);
-    }
-}
-```
-
-### `@ComponentScan`이 하는 일
-
-```
-com.example.myapp/              ← @SpringBootApplication 위치
-├── MyApplication.java
-├── controller/
-│   └── OrderController.java    ← @RestController → 스캔됨 ✅
-├── service/
-│   └── OrderService.java       ← @Service → 스캔됨 ✅
-├── repository/
-│   └── OrderRepository.java    ← @Repository → 스캔됨 ✅
-└── config/
-    └── AppConfig.java          ← @Configuration → 스캔됨 ✅
-```
-
-> `@SpringBootApplication`이 있는 패키지와 그 **하위 패키지**를 모두 스캔한다.
-> 그래서 메인 클래스는 항상 **최상위 패키지**에 둬야 한다!
-
-### 스캔 대상 필터링
-
-```java
-@ComponentScan(
-    excludeFilters = @ComponentScan.Filter(
-        type = FilterType.ANNOTATION,
-        classes = Configuration.class  // @Configuration 제외
-    )
-)
-```
-
----
-
-## 9. 실전 예제 — 계층 구조 한번에 보기
-
-```java
-// 1. Entity
-public class Order {
-    private Long id;
-    private String productName;
-    private int quantity;
-    // getter, setter, constructor ...
-}
-
-// 2. Repository 계층
-public interface OrderRepository {
-    void save(Order order);
-    Order findById(Long id);
-}
-
-@Repository
-public class JpaOrderRepository implements OrderRepository {
-    @Override
-    public void save(Order order) {
-        // JPA로 DB에 저장
-    }
-
-    @Override
-    public Order findById(Long id) {
-        // JPA로 DB에서 조회
-        return null;
-    }
-}
-
-// 3. Service 계층
 @Service
-@RequiredArgsConstructor
-public class OrderService {
-    private final OrderRepository orderRepository;  // 인터페이스에 의존
-
-    public void createOrder(Order order) {
-        // 비즈니스 로직
-        orderRepository.save(order);
+public class StudentService {
+    
+    @PostConstruct
+    public void init() {
+        // Bean 생성 직후 실행 (초기화 작업)
+        System.out.println("StudentService 초기화!");
     }
-
-    public Order getOrder(Long id) {
-        return orderRepository.findById(id);
-    }
-}
-
-// 4. Controller 계층
-@RestController
-@RequiredArgsConstructor
-@RequestMapping("/api/orders")
-public class OrderController {
-    private final OrderService orderService;  // Service에 의존
-
-    @PostMapping
-    public String createOrder(@RequestBody Order order) {
-        orderService.createOrder(order);
-        return "주문 완료";
-    }
-
-    @GetMapping("/{id}")
-    public Order getOrder(@PathVariable Long id) {
-        return orderService.getOrder(id);
+    
+    @PreDestroy
+    public void destroy() {
+        // 앱 종료 직전 실행 (정리 작업)
+        System.out.println("StudentService 종료!");
     }
 }
 ```
-
-```
-[클라이언트] → [Controller] → [Service] → [Repository] → [DB]
-                    ↓              ↓             ↓
-               @RestController  @Service    @Repository
-               DI: Service     DI: Repo     DI: EntityManager
-```
-
-> 모든 계층이 **인터페이스에 의존**하고, **구현체는 Spring이 주입**한다.
-> 이것이 IoC/DI의 실전 적용이다.
-
-### 계층별 메서드 네이밍 관례
-
-각 계층마다 관례적인 네이밍이 다르다. 공식 규칙은 아니지만 거의 모든 프로젝트가 이렇게 쓴다:
-
-**Repository** — "데이터를 어떻게 찾고 저장하나" (Spring Data JPA 메서드 이름 기반)
-
-| 동작 | 네이밍 | 예시 |
-|------|--------|------|
-| 저장 | `save` | `save(order)` |
-| 단건 조회 | `findById` | `findById(1L)` |
-| 조건 조회 | `findBy~` | `findByProductName("맥북")` |
-| 전체 조회 | `findAll` | `findAll()` |
-| 삭제 | `deleteById` | `deleteById(1L)` |
-| 존재 확인 | `existsById` | `existsById(1L)` |
-| 개수 | `countBy~` | `countByStatus("PENDING")` |
-
-> Phase 3에서 `JpaRepository`를 쓰면 이 이름 그대로 메서드가 자동 생성된다. 미리 익숙해지면 편해.
-
-**Service** — "비즈니스에서 뭘 하나" (동작 중심)
-
-| 동작 | 네이밍 | 예시 |
-|------|--------|------|
-| 생성 | `create~` | `createOrder(order)` |
-| 단건 조회 | `get~` | `getOrder(id)` |
-| 목록 조회 | `get~s` / `getAll~` | `getAllOrders()` |
-| 수정 | `update~` | `updateOrder(id, request)` |
-| 삭제 | `delete~` | `deleteOrder(id)` |
-| 검색 | `search~` | `searchOrders(keyword)` |
-| 비즈니스 동작 | 동사로 표현 | `cancelOrder()`, `processPayment()` |
-
-**Controller** — Service와 비슷, HTTP 메서드와 매핑
-
-```java
-@PostMapping          → createOrder()
-@GetMapping("/{id}")  → getOrder()
-@GetMapping           → getAllOrders()
-@PutMapping("/{id}")  → updateOrder()
-@DeleteMapping("/{id}") → deleteOrder()
-```
-
-**계층 간 흐름:**
-```
-Controller: createOrder()  →  Service: createOrder()  →  Repository: save()
-Controller: getOrder()     →  Service: getOrder()     →  Repository: findById()
-Controller: deleteOrder()  →  Service: deleteOrder()  →  Repository: deleteById()
-```
-
-> Repository는 `find/save/delete`, Service는 `get/create/delete` — 이 감각이 몸에 익으면 코드 읽는 속도가 확 빨라진다.
 
 ---
 
-## 면접 대비 한 줄 요약
+## 6장. 같은 타입의 Bean이 여러 개일 때 🟢
 
-| 질문 | 한 줄 답변 |
-|------|-----------|
-| IoC란? | 객체의 생성·관리 주체가 개발자에서 프레임워크(컨테이너)로 역전되는 것 |
-| DI란? | IoC를 구현하는 방법으로, 필요한 의존 객체를 외부에서 주입받는 패턴 |
-| IoC 컨테이너란? | 빈의 생성, 의존 관계 주입, 생명주기를 관리하는 Spring의 핵심 컨테이너 (ApplicationContext) |
-| DI 방법 중 뭘 써야 하나? | 생성자 주입. 불변성 보장, 테스트 용이, 순환 참조 조기 발견 가능 |
-| `@Component` vs `@Bean`? | `@Component`는 클래스에 붙여 자동 등록, `@Bean`은 메서드에 붙여 수동 등록 |
-| `@Primary` vs `@Qualifier`? | `@Primary`는 기본값, `@Qualifier`는 이름 지정. `@Qualifier`가 우선순위 높음 |
-| Bean Scope 기본값은? | Singleton. 앱 전체에서 1개의 인스턴스만 존재 |
-| Singleton 주의점은? | 상태를 갖지 않도록 무상태(stateless)로 설계해야 함 (멀티스레드 안전) |
-| `@PostConstruct`는 언제 실행? | 빈 생성 + DI 완료 직후에 호출되는 초기화 콜백 |
-| `@ComponentScan` 범위는? | `@SpringBootApplication`이 위치한 패키지와 그 하위 패키지 전체 |
+### 문제 상황
+
+```java
+public interface NotificationService {
+    void send(String message);
+}
+
+@Service
+public class EmailNotificationService implements NotificationService { ... }
+
+@Service
+public class SmsNotificationService implements NotificationService { ... }
+
+// 어떤 걸 주입해야 하지?
+@Service
+public class OrderService {
+    private final NotificationService notificationService;
+    // → 에러! 2개 중 뭘 넣어야 할지 모름
+}
+```
+
+### 해결: @Primary 또는 @Qualifier
+
+```java
+// 방법 1: @Primary (기본으로 쓸 것 지정)
+@Primary
+@Service
+public class EmailNotificationService implements NotificationService { ... }
+
+// 방법 2: @Qualifier (이름으로 지정)
+@Service
+public class OrderService {
+    public OrderService(
+        @Qualifier("smsNotificationService") NotificationService service
+    ) {
+        this.notificationService = service;
+    }
+}
+```
+
+---
+
+## 면접 대비
+
+### 🔴 필수
+
+**Q: "IoC가 뭔가요?"**
+
+> Inversion of Control, 제어의 역전입니다. 기존에는 개발자가 `new`로 직접 객체를 만들었는데, Spring에서는 컨테이너가 대신 객체를 만들고 관리합니다. 개발자는 필요한 객체를 선언만 하면 Spring이 주입해줍니다.
+
+**Q: "DI가 뭔가요?"**
+
+> Dependency Injection, 의존성 주입입니다. 객체가 필요한 의존 객체를 직접 생성하지 않고 외부(Spring 컨테이너)에서 전달받는 것입니다. 생성자 주입이 실무 표준이고, `@RequiredArgsConstructor`와 함께 사용합니다.
+
+**Q: "생성자 주입을 권장하는 이유는?"**
+
+> 세 가지입니다. 첫째, `final`을 쓸 수 있어서 불변성이 보장됩니다. 둘째, 테스트할 때 생성자에 Mock 객체를 넣기 쉽습니다. 셋째, 순환 참조를 앱 시작 시 즉시 발견할 수 있습니다. 필드 주입(`@Autowired`)은 이 장점들이 없어서 비추천됩니다.
+
+**Q: "@Component, @Service, @Repository 차이는?"**
+
+> 전부 `@Component`의 특수화입니다. 기능 차이는 없고, 코드를 읽는 사람에게 "이 클래스의 역할"을 알려주는 것입니다. `@Service`는 비즈니스 로직, `@Repository`는 DB 접근, `@Controller`는 요청 처리 계층에 사용합니다.
+
+### 🟡 개념
+
+**Q: "Bean Scope를 설명해주세요"**
+
+> Bean이 존재하는 범위입니다. 기본값은 `singleton`으로 앱 전체에서 1개만 만들어집니다. `prototype`은 요청마다 새로 만들고, `request`/`session`은 웹 환경에서 사용합니다. 실무에서는 99% singleton입니다.
+
+---
+
+## 정리: 이것만 기억하기
+
+```
+🎯 Spring의 핵심 = "내가 안 만들어. Spring이 갖다 줘"
+
+Bean 등록: @Component (@Service, @Repository, @Controller)
+DI 주입:   생성자 주입 + @RequiredArgsConstructor
+
+실무 패턴:
+  @Service
+  @RequiredArgsConstructor
+  public class XxxService {
+      private final XxxRepository repository;  ← Spring이 주입!
+  }
+
+3계층 구조:
+  Controller → Service → Repository
+  (요청처리)   (비즈니스)  (DB접근)
+```
+
+---
+
+> 🎯 **다음 주제**: 05번 "AOP" — 모든 메서드에 로깅을 넣으려면 반복 코드가 엄청나다. AOP로 "공통 관심사"를 분리하는 방법을 배운다!
+
