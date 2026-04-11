@@ -1,6 +1,22 @@
-# 17. RDBMS 기초와 SQL
+# 17. RDBMS 기초와 SQL — "데이터를 영구 저장하기"
 
 > **키워드**: `RDBMS` `MySQL` `DDL` `DML` `SELECT` `JOIN` `GROUP BY` `INDEX`
+
+---
+
+## 핵심만 한 문장
+
+**HashMap은 서버 끄면 사라진다. DB는 디스크에 저장하니까 안 사라진다. SQL은 그 DB에 명령하는 언어다**
+
+---
+
+## 학습 우선순위
+
+| 등급 | 섹션 | 의미 |
+|------|------|------|
+| 🔴 필수 | SELECT, WHERE, JOIN, Docker MySQL 설정 | 매일 쓰는 기본 SQL |
+| 🟡 이해 | GROUP BY, INDEX, DDL/DML | 개념 이해 필요 |
+| 🟢 참고 | 서브쿼리, HAVING | 18번에서 심화 |
 
 ---
 

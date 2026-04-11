@@ -1,6 +1,12 @@
-# 22. 트랜잭션과 동시성
+# 22. 트랜잭션과 동시성 — "데이터를 안전하게 저장하는 법"
 
 > **키워드**: `@Transactional` `ACID` `격리 수준` `propagation` `readOnly` `낙관적 락` `비관적 락` `@Version` `Gap Lock` `Named Lock` `Redis 분산 락` `Redisson`
+
+---
+
+## 핵심만 한 문장
+
+**@Transactional은 "이 메서드 안에서 하는 일을 하나의 묶음으로 처리해라. 중간에 실패하면 전부 취소"라는 뜻이다**
 
 ---
 

@@ -1,6 +1,12 @@
-# 24. 연관 관계 매핑과 N+1 문제
+# 24. 연관 관계 매핑과 N+1 문제 — "테이블 관계를 Java 코드로 표현하기"
 
 > **키워드**: `@ManyToOne` `@OneToMany` `mappedBy` `LAZY` `EAGER` `Proxy` `N+1` `Fetch Join` `@EntityGraph` `Batch Size` `cascade` `orphanRemoval`
+
+---
+
+## 핵심만 한 문장
+
+**학생 1명이 여러 과목을 수강 → @ManyToOne/@OneToMany로 표현하고, "N+1 문제"를 Fetch Join으로 해결하는 것이 JPA의 핵심이다**
 
 ---
 

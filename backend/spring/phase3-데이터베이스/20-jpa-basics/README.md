@@ -1,6 +1,12 @@
-# 20. JPA 기초 — ORM 개념과 Entity
+# 20. JPA 기초 — ORM 개념과 Entity — "SQL 안 쓰고 DB 다루기"
 
 > **키워드**: `ORM` `JPA` `Hibernate` `@Entity` `@Id` `@GeneratedValue` `@Column` `@Enumerated` `ddl-auto`
+
+---
+
+## 핵심만 한 문장
+
+**Java 객체 = DB 테이블. @Entity 붙이면 JPA가 자동으로 SQL을 만들어서 DB에 저장/조회해준다**
 
 ---
 

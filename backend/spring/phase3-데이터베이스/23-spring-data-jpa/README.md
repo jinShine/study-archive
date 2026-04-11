@@ -1,6 +1,12 @@
-# 23. Spring Data JPA
+# 23. Spring Data JPA — "인터페이스만 만들면 CRUD가 끝난다"
 
 > **키워드**: `JpaRepository` `쿼리 메서드` `@Query` `JPQL` `Native Query` `Projection` `Pageable` `Page` `Slice` `Cursor 페이징` `Specification`
+
+---
+
+## 핵심만 한 문장
+
+**JpaRepository를 상속하면 save(), findById(), findAll()이 자동으로 생긴다. 복잡한 쿼리는 메서드명 규칙이나 @Query로 작성한다**
 
 ---
 
