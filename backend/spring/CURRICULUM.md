@@ -7,10 +7,10 @@
 ## 로드맵 한눈에 보기
 
 ```
-Phase 1: 기초 체력        ██████████ (01~06)   ✅ 완료!
-Phase 2: API 개발         ██████████ (07~16)   ✅ 완료!
-Phase 3: 데이터베이스      ██████████ (17~26)   ← 지금 여기
-Phase 4: 실전 심화        ██████████ (27~32)
+Phase 1: 기초 체력        ██████████ (01~06)   ✅ 완료 (리뉴얼 완료)
+Phase 2: API 개발         ██████████ (07~16)   ✅ 완료 (리뉴얼 예정)
+Phase 3: 데이터베이스      ██████████ (17~26)   ✅ 완료 (리뉴얼 예정)
+Phase 4: 실전 심화        ██████████ (27~32)   ← 지금 여기 (27 완료)
 Phase 5: 배포 & 운영      ██████████ (33~39)
 Phase 6: 미니 프로젝트     ██████████ (40~44)
 ```
@@ -30,9 +30,9 @@ Phase 6: 미니 프로젝트     ██████████ (40~44)
 | 05 | **AOP 실전** | @Aspect, @Before/@After/@Around, Pointcut 표현식, 로깅/트랜잭션 적용 | ✅ 완료 |
 | 06 | **예외 처리 전략** | @ExceptionHandler, @ControllerAdvice, @RestControllerAdvice, ErrorResponse 설계 | ✅ 완료 |
 
-> 📝 **보충 예정 (02, 03)**
-> - 02에 추가: `@ConfigurationProperties`, Jasypt 암호화, 설정 우선순위, 환경별 설정 전략
-> - 03에 추가: MDC(요청 추적), `logback-spring.xml`, JSON 구조화 로깅, 비동기 로깅
+> 📝 **2026-04-07 리뉴얼 완료**: 비유 먼저 → 정의, 따라쳐보기, 실행 결과, 면접 대비 통일
+> - 02: @ConfigurationProperties, 설정 우선순위 반영 완료
+> - 03: Logging 심화는 🟢 참고 수준으로 축소
 
 ---
 
@@ -70,7 +70,7 @@ Phase 6: 미니 프로젝트     ██████████ (40~44)
 | 23 | **Spring Data JPA** | JpaRepository, 쿼리 메서드, @Query(JPQL/Native), Projection, Specification, Pageable, Page vs Slice, Cursor 기반 페이징 | ✅ 완료 |
 | 24 | **연관 관계 매핑과 N+1 문제** | @OneToMany, @ManyToOne, @OneToOne LAZY 주의사항, cascade, orphanRemoval, Fetch 전략, Proxy 동작, Fetch Join, @EntityGraph, Batch Size | ✅ 완료 |
 | 25 | **QueryDSL** | JPAQueryFactory, Q클래스, BooleanExpression, 동적 쿼리, Projections, @QueryProjection, 페이징, 집계 | ✅ 완료 |
-| 26 | **Spring vs Hibernate 총정리** | 계층별 책임, 트랜잭션 경계 vs 엔티티 관리, Flush/커넥션/예외 처리, readOnly 최적화(Spring vs Hibernate 레벨), 리플리카 라우팅, 실무 패턴 | ⬜ |
+| 26 | **Spring vs Hibernate 총정리** | 계층별 책임, 트랜잭션 경계 vs 엔티티 관리, Flush/커넥션/예외 처리, readOnly 최적화(Spring vs Hibernate 레벨), 리플리카 라우팅, 실무 패턴 | ✅ 완료 |
 
 ---
 
@@ -80,7 +80,7 @@ Phase 6: 미니 프로젝트     ██████████ (40~44)
 
 | # | 주제 | 핵심 키워드 | 상태 |
 |---|------|------------|------|
-| 27 | **인증/인가 기초** | Spring Security, SecurityFilterChain, 세션 vs JWT 비교, CORS | ⬜ |
+| 27 | **인증/인가 기초** | Spring Security, SecurityFilterChain, 세션 vs JWT 비교, CORS | ✅ 완료 |
 | 28 | **JWT 인증 구현** | JWT 구조, Access/Refresh Token, 토큰 저장 전략, Filter 구현 | ⬜ |
 | 29 | **테스트 코드 작성** | JUnit 5, @SpringBootTest, @WebMvcTest, Mockito, AssertJ, @ParameterizedTest | ⬜ |
 | 30 | **캐싱과 성능** | @Cacheable, Redis 기초, 캐시 전략(TTL, Eviction) | ⬜ |
