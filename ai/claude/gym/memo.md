@@ -972,3 +972,27 @@ https://code.claude.com/docs/ko/hooks-guide
     
 
 ---
+
+
+메타프롬프트 활용 PRD (+MVP) 작성하기
+```
+당신은 클로드 코드 프롬프트 엔지니어 입니다.
+노션을 사용해서 입력한 견적서 내용을
+클라이언트가 웹으로 확인하고 PDF로 다운받을 수 있는
+MVP PRD 문서를 작성하는 메타 프롬프트를 생성해주세요.
+```
+
+
+---
+
+# 플러그인이란? - 마켓플레이스부터 실전 데모까지
+
+아래 참고 링크들을 통해서 어떤것들이 소개되어있고 적용할 수 있는지에 대해 알려줘.
+
+## 참고
+
+- [[공식문서] 클로드 코드 플러그인](https://code.claude.com/docs/ko/plugins)
+- [[공식문서] 플러그인 마켓플레이스](https://code.claude.com/docs/ko/plugin-marketplaces)
+- [마켓플레이스 모음: Claude Code Marketplaces](https://claudemarketplaces.com/)
+- [[깃헙] anthropics/claude-code](https://github.com/anthropics/claude-code)
+
