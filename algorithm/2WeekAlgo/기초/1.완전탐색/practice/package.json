@@ -1,0 +1,19 @@
+{
+  "name": "ch01-brute-force",
+  "version": "1.0.0",
+  "description": "2WeekAlgo - 1. 완전탐색 실습",
+  "private": true,
+  "type": "commonjs",
+  "scripts": {
+    "p1": "node my/01-password.js < inputs/01.txt",
+    "p2": "node my/02-candy.js < inputs/02.txt",
+    "p3": "node my/03-equation.js < inputs/03.txt",
+    "p4": "node my/04-baseball.js < inputs/04.txt",
+    "p5": "node my/05-meeting.js < inputs/05.txt",
+    "s1": "node solutions/01-password.js < inputs/01.txt",
+    "s2": "node solutions/02-candy.js < inputs/02.txt",
+    "s3": "node solutions/03-equation.js < inputs/03.txt",
+    "s4": "node solutions/04-baseball.js < inputs/04.txt",
+    "s5": "node solutions/05-meeting.js < inputs/05.txt"
+  }
+}

@@ -44,7 +44,7 @@ public class Problem3 {
             return answer == Integer.MAX_VALUE ? -1 : answer;
         }
 
-        // ② 친구를 줄세우는 모든 순서 시도 (백트래킹)
+        // ② 친구를 줄세우는 모든 순서 시도
         void tryAllOrders(int[] order, boolean[] used, int depth) {
             if (depth == order.length) {
                 check(order); // 줄세우기 완성되면 점검
@@ -70,12 +70,11 @@ public class Problem3 {
                 while (idx < end && friendIdx < order.length) {
                     int reach = hWeak[idx] + order[friendIdx]; // 현재 친구가 닿는 끝
                     while (idx < end && hWeak[idx] <= reach) {
-                        idx++; // reach 안의 weak는 다 커버
+                        idx++;
                     }
-                    friendIdx++; // 다음 친구
+                    friendIdx++;
                 }
 
-                // 모든 weak 커버 성공 → 사용한 친구 수가 후보
                 if (idx == end) {
                     answer = Math.min(answer, friendIdx);
                 }
