@@ -41,11 +41,8 @@ public class Problem3 {
         while (count < jobs.length) {
 
             while (index < jobs.length && jobs[index][0] <= time) {
-
                 pq.offer(jobs[index]);
-
                 index++;
-
             }
 
             if (pq.isEmpty()) {
