@@ -1,0 +1,113 @@
+* 스프링 bean
+스프링이 new 해서 만들어서 들고있는 객체
+
+* 디펜던시, 디펜던시 인젝션
+이게 일일히 챙기기 귀찮다(어렵다)
+-> 이건 스프링이랑 상관 없는것
+
+* 스프링 디펜던시 인젝션 (기능)
+@Autowired
+
+* Bean 생성방법들
+1. 어노테이션
+@Component, @Controller, @Service, @Repository
+
+2. @Configuration, @Bean
+   @Configuration
+   public class BeanConfig {
+       @Bean
+       public MyBean myBean() {
+           return new MyBean();
+       }
+   }
+
+if 문
+복잡한 객체 생성 조건 로직
+또는
+라이브러리 클래서라서 어노테이션 달아주는게 애초에 불가능할때
+
+3. XML
+  https://johngrib.github.io/wiki/spring-bean-config-xml/
+
+* 스프링 DI 방법들
+1. 필드 인젝션
+@Autowired
+private PaymentService paymentService;
+
+2. 세터 인젝션
+@Autowired
+public void setPaymentService(PaymentService paymentService) {
+    this.paymentService = paymentService;
+}
+
+3. 생성자 인젝션
+@Autowired
+public PaymentController(PaymentService paymentService) {
+    this.paymentService = paymentService;
+}
+
+순수한 자바코드로 쉽게 생성가능하고,
+초기에 1회만 호출되게하고,
+@RequiredArgsConstructor 랑 private final 이랑 쓸 수 잇는
+생성자 인젝션을 써서
+
+* Bean 라이프사이클
+
+* @PreDestroy
+Graceful shutdown 을 구현하자!
+
+* @PreDestory 원리
+1. 시스템콜
+운영체제의 핵심기능들을 쓸 수 있긴 하지만
+기본적으로 느리다
+file(open, write, read), socket(read, write, listen), memory(alloc, free), process(fork, exit, signal), time
+
+2. 시그널
+https://sourceware.org/glibc/manual/latest/html_mono/libc.html#Termination-Signals
+인텔리제이 중단버튼 누르면
+종료시그널중에서 SIGINT 라는게 날아감
+기존동작: 종료
+kill -15 pid (SIGTERM) (SIGINT같은)
+
+잘 만든 프로그램들은
+종료시그널을 받았을때,
+뒤정리를 깔끔하게해요(graceful shutdown)
+
+절대 시그널을 핸들링할 수 없는 딱하나의 종료시그널이 있음
+SIGKILL
+
+3. 내가 프로세스를 종료한다?
+1) SIGTERM
+kill -15
+이렇게 했는데도....
+가끔씩....
+말썽부리는애들이 30초 1분 5분 10분 안꺼짐....
+
+2) SIGKILL
+강종
+
+* spring @PreDestory 는 어떻게 실행이 되고있을까?
+-> 종료 시그널을 받으면 스프링이 @PreDestroy 붙은거 전부 다 호출하고 종료하게끔 시그널 핸들링이 되어있는것.
+
+참고) 쿠버네티스 k8s
+
+
+
+* 시스템콜, 시그널, @PreDestory, Graceful Shutdown
+
+=========================예습===========================
+* DriverManager
+* DataSource
+
+* TCP 소켓통신
+tcp sync ack
+tcp 3way handshake
+
+* Transaction
+* Transaction in mysql
+* Transaction in JDBC
+* Transaction in spring (@Transactional)
+
+---- 여유되면 ----
+* Transaction propagation
+* Transaction isolation level

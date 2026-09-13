@@ -1,0 +1,21 @@
+{
+  "folders": [
+    {
+      "name": "my-bean-di-practice",
+      "path": "backend/private-tutoring/02회차(2026-09-02)/practice/spring/my-bean-di-practice"
+    }
+  ],
+  "settings": {
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "java.import.gradle.enabled": true,
+    "java.import.gradle.wrapper.enabled": true,
+    "java.compile.nullAnalysis.mode": "automatic"
+  },
+  "extensions": {
+    "recommendations": [
+      "vscjava.vscode-java-pack",
+      "vmware.vscode-boot-dev-pack",
+      "vscjava.vscode-gradle"
+    ]
+  }
+}

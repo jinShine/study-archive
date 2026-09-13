@@ -1,0 +1,22 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Spring Boot: PracticeApplication",
+      "request": "launch",
+      "mainClass": "com.buzz.practice.PracticeApplication",
+      "projectName": "my-bean-di-practice",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "type": "java",
+      "name": "Spring Boot: PracticeApplication (8083)",
+      "request": "launch",
+      "mainClass": "com.buzz.practice.PracticeApplication",
+      "projectName": "my-bean-di-practice",
+      "cwd": "${workspaceFolder}",
+      "args": "--server.port=8083"
+    }
+  ]
+}

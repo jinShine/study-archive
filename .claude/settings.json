@@ -3,7 +3,21 @@
     "allow": [
       "Bash(gh repo *)",
       "Bash(gh api *)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(./build.sh)",
+      "Bash(./run.sh Problem2)",
+      "Bash(./run.sh Problem3)",
+      "Bash(mkdir -p \"/Users/buzz/Documents/Private/projects/study-archive/algorithm/2WeekAlgo/기초/1.완전탐색/practice/solutions\" \"/Users/buzz/Documents/Private/projects/study-archive/algorithm/2WeekAlgo/기초/1.완전탐색/practice/my\" \"/Users/buzz/Documents/Private/projects/study-archive/algorithm/2WeekAlgo/기초/1.완전탐색/practice/inputs\")",
+      "Bash(node solutions/04-baseball.js)",
+      "Bash(node solutions/05-meeting.js)",
+      "Bash(node solutions/01-password.js)",
+      "Bash(node solutions/02-candy.js)",
+      "Bash(node solutions/03-equation.js)",
+      "Bash(mkdir -p /Users/buzz/Documents/Private/projects/study-archive/algorithm/All-In-One-Java/문제/week7/src /Users/buzz/Documents/Private/projects/study-archive/algorithm/All-In-One-Java/문제/week7/src-js)"
+    ],
+    "additionalDirectories": [
+      "/Users/buzz/Documents/Private/projects/study-archive/algorithm/2WeekAlgo/기초/1.완전탐색/practice",
+      "/Users/buzz/Documents/Private/projects/study-archive/algorithm/All-In-One-Java/문제/week7"
     ]
   }
 }
