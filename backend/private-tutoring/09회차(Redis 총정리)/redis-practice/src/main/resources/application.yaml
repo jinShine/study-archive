@@ -1,0 +1,12 @@
+server:
+  port: 8083
+spring:
+  application:
+    name: redis-practice
+
+  data:
+    redis:
+      host: localhost
+      port: 6380
+      database: 0
+      timeout: 3000

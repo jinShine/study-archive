@@ -70,6 +70,19 @@ private-tutoring/
     source-materials/
       preview-keywords.md
       spring-db-transaction-claude.md
+
+  04회차(2026-09-17)/
+    README.md
+    STUDY_GUIDE.md
+    notes/
+      01-lesson-notes.md
+    practice/
+      README.md
+      spring/
+        README.md
+    assets/
+    source-materials/
+      preview-keywords.md
 ```
 
 ## 수업별 인덱스
@@ -79,6 +92,12 @@ private-tutoring/
 | 1회차 | 2026/08/25 | 백엔드 전체 흐름, 확장, 모니터링, DB 복제, 샤딩, Redis, 메시지 큐, MSA | [STUDY_GUIDE.md](./01회차(2026-08-25)/STUDY_GUIDE.md) | 정리 완료 |
 | 2회차 | 2026/09/02 | Spring Bean, Bean 생성 방법, Dependency/DI, Bean 라이프사이클, Graceful Shutdown | [STUDY_GUIDE.md](./02회차(2026-09-02)/STUDY_GUIDE.md) | 정리 완료 |
 | 3회차 | 2026/09/10 | DriverManager, DataSource, TCP, Transaction, JDBC, Spring `@Transactional` | [STUDY_GUIDE.md](./03회차(2026-09-10)/STUDY_GUIDE.md) | 예습·참고 자료 통합, 10단계 실습 가이드 |
+| 4회차 | 2026/09/17 | Transaction propagation, Connection 재사용, ThreadLocal, 새 스레드와 원자성 | [STUDY_GUIDE.md](./04회차(2026-09-17)/STUDY_GUIDE.md) | 실제 수업 1부 정리, 예습은 백업 보관 |
+| 5회차 | 2026/09/23 | 프로세스 메모리 구조, fork, COW, clone, Thread, 데몬 스레드, 생명주기, 스레드 풀, ThreadPoolExecutor | [STUDY_GUIDE.md](./05회차(2026-09-23)/STUDY_GUIDE.md) | 정리 완료 |
+| 6회차 | 2026/09/28 | Index(B+Tree, Clustered/Secondary, Covering, 복합 인덱스, 카디널리티), 멀티스레드 동시성(CAS, Mutex, synchronized, ReentrantLock, thread-safe 컬렉션) | [STUDY_GUIDE.md](./06회차(2026-09-28)/STUDY_GUIDE.md) | 정리 완료, 동시성 실행 코드 포함 |
+| 7회차 | 2026/10/13 | Cache(하드웨어, CDN, Local/Remote), Redis 자료구조·싱글 스레드·메모리 관리, 캐싱 전략(카톡 vs 라인), Lettuce, Spring Data Redis, Spring Cache | [STUDY_GUIDE.md](./07회차(2026-10-13)/STUDY_GUIDE.md) | 정리 완료, 예습([PRESTUDY.md](./07회차(2026-10-13)/PRESTUDY.md))·redis-cli·Spring 실습 포함 |
+| 8회차 | 2026/10/21 | Redis 분산 락(lock timeout, Redisson), Pub/Sub(at-most-once vs Kafka at-least-once), Lua Script, Pipeline, Spring 서버 전체 흐름·Tomcat | [STUDY_GUIDE.md](./08회차(2026-10-21)/STUDY_GUIDE.md) | 정리 완료, 예습([PRESTUDY.md](./08회차(2026-10-21)/PRESTUDY.md))·Spring 실습·Lua 연습 문제 포함 |
+| 9회차 | 2026/10/30 | Redis를 여러 대로: Replication(읽기 분산 vs HA, 비동기 복제), Sentinel(정족수, 장애 흐름), Cluster(샤딩, 리밸런싱, 컨시스턴트 해싱, 해시 슬롯, MOVED, 장애 조치, CROSSSLOT·해시 태그), 실무 관리형 서비스(ElastiCache) | [STUDY_GUIDE.md](./09회차(2026-10-30)/STUDY_GUIDE.md) | 정리 완료, 예습([PRESTUDY.md](./09회차(2026-10-30)/PRESTUDY.md))·Cluster 실습 따라하기 포함. Redis 과정 마지막 회차 |
 
 ## 회차별 하위 폴더 역할
 

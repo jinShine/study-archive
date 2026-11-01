@@ -1,0 +1,42 @@
+# Master 1 + Replica 2 + Sentinel 3
+# 실행: docker compose -p redis-ha up -d   /   정리: docker compose -p redis-ha down
+# 포트를 밖으로 열지 않는다. redis-cli는 docker exec로 컨테이너 안에서 친다.
+
+x-sentinel: &sentinel
+  image: redis:7.4
+  depends_on: [redis-master, redis-replica-1, redis-replica-2]
+  # Sentinel은 설정 파일에 상태를 다시 써야 해서, 시작할 때 파일을 만들어 넘긴다
+  command: >
+    sh -c 'printf "port 26379\n
+    sentinel resolve-hostnames yes\n
+    sentinel announce-hostnames yes\n
+    sentinel monitor mymaster redis-master 6379 2\n
+    sentinel down-after-milliseconds mymaster 5000\n
+    sentinel failover-timeout mymaster 10000\n" | sed "s/^ //" > /tmp/sentinel.conf
+    && redis-sentinel /tmp/sentinel.conf'
+
+services:
+  redis-master:
+    image: redis:7.4
+    container_name: redis-master
+    command: redis-server --replica-announce-ip redis-master
+
+  redis-replica-1:
+    image: redis:7.4
+    container_name: redis-replica-1
+    command: redis-server --replicaof redis-master 6379 --replica-announce-ip redis-replica-1
+
+  redis-replica-2:
+    image: redis:7.4
+    container_name: redis-replica-2
+    command: redis-server --replicaof redis-master 6379 --replica-announce-ip redis-replica-2
+
+  sentinel-1:
+    <<: *sentinel
+    container_name: sentinel-1
+  sentinel-2:
+    <<: *sentinel
+    container_name: sentinel-2
+  sentinel-3:
+    <<: *sentinel
+    container_name: sentinel-3
